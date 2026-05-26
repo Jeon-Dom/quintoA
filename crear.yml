@@ -1,0 +1,51 @@
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+
+    permissions:
+      contents: read
+      packages: write
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.12"
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install  pytest
+    
+    - name: Ejecutar aplicacion
+      run: python app.py
+    
+    - name: Test with pytest
+      run: pytest
+
+    - name: Simulacion de deploy
+      run: echo "Desplegando aplicación..."
+
+    -name: Ejecutar la app
+      run: python app.py
+    
+    -name: Simular el deploy
+      run: echo "Simular que se esta desplegando"
+
+    -name: Construir la imagen de docker
+      run: docker build -t ghcr.io/Jeon-Dom/hello-dome:1.0.0 .
+    
+    -name: Login en GitHub container registry
+      run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    
+    -name: Publicar la imagen
+      run: docker push ghcr.io/jeon-dom/hello-dome:1.0.0
+
+    
